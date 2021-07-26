@@ -1,0 +1,320 @@
+//    id=[row,col]
+
+//    //shiftIndexOneRowUp
+//    private static int[] shiftUp(int[] id) {
+//        id[0]--;
+//        return id;
+//    }
+//
+//    //shiftIndexOneRowDown
+//    private static int[] shiftDown(int[] id) {
+//        id[0]++;
+//        return id;
+//    }
+//
+//    //shiftIndexOneColumnLeft
+//    private static int[] shiftLeft(int[] id) {
+//        id[1]--;
+//        return id;
+//    }
+//
+//    //shiftIndexOneColumnRight
+//    private static int[] shiftRight(int[] id) {
+//        id[1]++;
+//        return id;
+//    }
+________________________________________________________________________________________________________________________
+
+    private static void branchTo(int[] id) {
+        //if id is in eliminatedIDs
+//        for(EliminatedCell deleted: eliminatedCells){
+//            if(id[0] == deleted.getId()[0] && id[1] == deleted.getId()[1]){
+//                for (int edgeCell: edgeCellIndexList){
+//
+//                }
+//            }
+//        }
+
+//        redRecord.add();
+//        branchTo(shiftUp(shiftLeft(id)));
+//        branchTo(shiftUp(shiftRight(id)));
+//        branchTo(shiftDown(shiftLeft(id)));
+//        branchTo(shiftDown(shiftRight(id)));
+    }
+________________________________________________________________________________________________________________________
+
+        redRecord.clear();
+//        branchTo(latestCell.getId());
+        //if red flag given, keepsConstraintThree = false.
+________________________________________________________________________________________________________________________
+
+MistakeChecker unhighlights cells and isVisited = false in cellArray & clears redRecord.
+    Then checks constraint2. Then constraint3. If both pass then, check constraint1.
+
+constraint2:
+    get the adjacent neighbourList of latestCell (which is eliminated)
+    if adj. neigh. of latestCell = eliminated, add to redRecord; constraint3 = false;
+
+constraint3:
+    check if white is connected in a single component.
+    there should only be 1 white cluster.
+    if a cell is eliminated, then it cannot be visited.
+    start with a random activated (white) cell.
+    start the algo with -int snakeCount-
+    get the neighbourList
+    snakeCount = 4; neighbour.isVisited = true;
+    if a snake reaches a dead end (adjNeighbourList are all eliminated || adjNeighbourList are all visited),
+        snakeCount--; return;
+    if snakeCount == 0 && algoIsFinished,
+        loop over cellArray;
+        if !cell.isVisited, add to redRecord;
+        constraint3 = false;
+
+if constraint2 or constraint3 == false,
+    fore cell: redRecord
+        cell.highlightCell();
+
+constraint1:
+    for each row in cellArray,
+        -List<Integer> rowNumbers-
+        index = sideLength*row+col;
+        number = hitoriMatrix[index]
+        before number is being added,
+            if number is in rowNumbers already, add to redRecord.
+
+    for each column in cellArray,
+        -List<Integer> columnNumbers-
+        before number is being added,
+            if number is in columnNumbers already, add to redRecord.
+
+if constraint1 == false;
+    loadIntroLabel();
+________________________________________________________________________________________________________________________
+
+    private static int[] indexToID(Integer index) {
+        int[] id = new int[2];
+        id[0] = (int) Math.floor((double) index / sideLength);
+        id[1] = (index % sideLength);
+        return id;
+    }
+
+    private boolean void isCyclic(List<Cell[]> cycleRedRecord){
+        return false;
+    }
+
+    private static void branchForEdgeCell(Cell cell){
+        if(cell.isEdgeCell){
+
+        }
+    }
+________________________________________________________________________________________________________________________
+
+    static Cell[] getNeighbourList(int id[]) {
+        boolean canShiftUp = false;
+        boolean canShiftDown = false;
+        boolean canShiftLeft = false;
+        boolean canShiftRight = false;
+
+        Cell[] neighbourList = new Cell[8];
+            //referenced as top-left(0). up(1). top-right(2). left(3).
+            //right(4). bottom-left(5). down(6). bottom-right(7)
+
+        for (Cell neighbour : neighbourList) {
+            neighbour = null;
+        }
+
+        if ((id[0] - 1) >= 0) {
+            canShiftUp = true;
+        }
+        if ((id[0] + 1) < sideLength) {
+            canShiftDown = true;
+        }
+        if ((id[1] - 1) >= 0) {
+            canShiftLeft = true;
+        }
+        if ((id[1] + 1) < sideLength) {
+            canShiftRight = true;
+        }
+
+        //turn id to index
+        int index = sideLength * id[0] + id[1];
+
+
+        if (canShiftUp) {
+            //up
+            neighbourList[1] = cellArray[index - sideLength];
+            if (canShiftLeft) {
+                //top-left
+//                neighbourList[0] = cellArray[index - sideLength - 1];
+            }
+            if (canShiftRight) {
+                //top-right
+//                neighbourList[2] = cellArray[index - sideLength + 1];
+            }
+        }
+        if (canShiftDown) {
+            //down
+            neighbourList[6] = cellArray[index + sideLength];
+            if (canShiftLeft) {
+                //bottom-left
+//                neighbourList[5] = cellArray[index + sideLength - 1];
+            }
+            if (canShiftRight) {
+                //bottom-right
+//                neighbourList[7] = cellArray[index + sideLength + 1];
+            }
+        }
+        if (canShiftLeft) {
+            //left
+            neighbourList[3] = cellArray[index - 1];
+        }
+        if (canShiftRight) {
+            //right
+            neighbourList[4] = cellArray[index + 1];
+        }
+
+        return neighbourList;
+    }
+________________________________________________________________________________________________________________________
+
+if (!neighbourList[3].isEliminated && !cell.isVisited) {
+            cycleRedRecord.add(new Cell[]{cell,neighbourList[3]});
+            cell.isVisited = true;
+            spreadFrom(neighbourList[3]);
+        }
+
+        //top-left(0). up(1). top-right(2). left(3).
+        //right(4). bottom-left(5). down(6). bottom-right(7)
+
+        //branch to 0,2,5,7 if such Cells are eliminated
+________________________________________________________________________________________________________________________
+
+    private static List<Cell[]> cycleRedRecord = new ArrayList<>();
+    private static List<Integer> edgeCellIndexList;
+
+    public static List<Integer> getEdgeCellIndexList() {
+        return edgeCellIndexList;
+    }
+
+    private static void generateEdgeCellIndexList() {
+        edgeCellIndexList = new ArrayList<>();
+
+        for (int index = 0; index < sideLength; index++) {
+            edgeCellIndexList.add(index);   //top
+            edgeCellIndexList.add(sideLength * index);    //left
+            edgeCellIndexList.add(sideLength * index + (sideLength - 1));   //right
+            edgeCellIndexList.add(sideLength * (sideLength - 1) + index);   //down
+        }
+
+        //double values of the corners
+        edgeCellIndexList.remove(Integer.valueOf(0));   //top-left
+        edgeCellIndexList.remove(Integer.valueOf(sideLength - 1));  //top-right
+        edgeCellIndexList.remove(Integer.valueOf(sideLength * (sideLength - 1)));   //bottom-left
+        edgeCellIndexList.remove(Integer.valueOf((sideLength * sideLength) - 1));   //bottom-right
+    }
+________________________________________________________________________________________________________________________
+
+    From Cell class...
+    if (MistakeChecker.getInstance().getEdgeCellIndexList().contains(index)) {
+        isEdgeCell = true;
+    }
+________________________________________________________________________________________________________________________
+
+                    CellGrid.getCellArray()[index] = new Cell(pane,id);
+________________________________________________________________________________________________________________________
+
+            for (int row = 0; row < sideLength; row++) {
+                boolean checkLeft = false;
+                boolean checkRight = false;
+                boolean checkUp = false;
+
+                //checkLeft
+                if(col == 0){
+                    checkLeft = true;
+                }
+                else if (hitoriMatrix[sideLength * row + (col-1)] != 0){
+                    checkLeft = true;
+                }
+
+                //checkRight
+                if (col == sideLength-1){
+                    checkRight = true;
+                }
+                else if (hitoriMatrix[sideLength * row + (col+1)] != 0){
+                    checkRight = true;
+                }
+
+                //checkUp
+                if (row == 0){
+                    checkUp = true;
+                }
+                else if (hitoriMatrix[sideLength * (row-1) + col] != 0){
+                    checkUp = true;
+                }
+
+
+                if (checkLeft && checkRight && checkUp &&
+                        (actualBlackedOutCells != 0) && checkChance(80,100)){
+                    hitoriMatrix[sideLength * row + col] = 0;
+                    actualBlackedOutCells--;
+                    blackedOutIndexList.add(new int[]{row,col}); //record it's position
+
+                }
+            }
+________________________________________________________________________________________________________________________
+
+    static class GridSelectHandler implements EventHandler<MouseEvent> {
+        private StackPane pane;
+        private int[] id;
+            //id = [row,col]
+
+        public GridSelectHandler(StackPane pane, int[] id) {
+            this.pane = pane;
+            this.id = id;
+        }
+
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            if (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                Integer index = HitoriModel.getSideLength()*id[0]+id[1];
+                if (!CellGrid.getCellArray()[index].isEliminated) {   //its not eliminated
+                    HitoriView.eliminate(pane);
+                    CellGrid.getCellArray()[index].isEliminated = true;
+                    CellGrid.getEliminatedLog().push(index);
+                } else {    //it is eliminated
+                    HitoriView.reactivate(pane);
+                    CellGrid.getCellArray()[index].isEliminated = true;
+                    CellGrid.getEliminatedLog().remove(index);
+                }
+            }
+            MistakeChecker.checkForMistake(); //see if last pane in eliminatedLog is bad
+        }
+    }
+________________________________________________________________________________________________________________________
+
+with the grid resizing appropriately (basically a cube-ish shape) to fill the available space
+
+The Grid: StackPane objects + Label (font) + GridPane must resize.
+
+Add some sort of Window Listener that increments the prefSize() of GridPane+StackPane
+                                 and increments .fontSize of Label
+as the window width:height ratio stays roughly the same range but the window area increases.
+________________________________________________________________________________________________________________________
+
+Have a random chance for any cell to be blacked-out -> 80%
+However, upon choosing the next one, it must go through all 3 constraints.
+
+going through constraint2: if I make this cell eliminated,
+       would there be a mistake (any adjacent eliminated cells around?)
+       if cell would be a mistake, it must not be eliminated. if not so, go to constraint3.
+
+going through constraint3: if I make this cell eliminated,
+        would there be a mistake (some cell isn't visited by the snakes.)
+       if cell would be a mistake, it must not be eliminated. if not so, checkChance to eliminate.
+
+going through constraint1: by default, via using a matrix generator, constraint1 is
+        already fulfilled.
+________________________________________________________________________________________________________________________
+
+        From Cell.java:
+        int index = HitoriModel.getSideLength() * id[0] + id[1];
